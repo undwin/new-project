@@ -1,0 +1,230 @@
+github守则
+	1：下载git地址：https://git-scm.com/downloads
+设置Git的user name和email：
+	$ git config --global user.name "xuhaiyan"
+	$ git config --global user.email "haiyan.xu.vip@gmail.com"
+
+二、生成SSH密钥过程：
+	1.查看是否已经有了ssh密钥：cd ~/.ssh
+	如果没有密钥则不会有此文件夹，有则备份删除
+2.生存密钥：
+	$ ssh-keygen -t rsa -C “haiyan.xu.vip@gmail.com”
+	按3个回车，密码为空。	
+
+	Your identification has been saved in /home/tekkub/.ssh/id_rsa.
+	Your public key has been saved in /home/tekkub/.ssh/id_rsa.pub.
+	The key fingerprint is:
+	………………
+
+	最后得到了两个文件：id_rsa和id_rsa.pub
+
+	3.添加密钥到ssh：ssh-add 文件名
+	需要之前输入密码。
+	4.在github上添加ssh密钥，这要添加的是“id_rsa.pub”里面的公钥。
+	打开https://github.com/ ，登陆xuhaiyan825，然后添加ssh。
+
+	5.测试：ssh git@github.com
+Git 内都只有三种状态：‍‍‍‍‍‍已提交（committed），已修改（modified）和已暂存（staged）
+	已修改就是，修改文件
+	已攒存：就是缓存的意识，命令:git add 项目名或者文件
+	已提交：是向本地仓库提交版本：git commit -m "里面是提交说明"
+Git常用命令
+	git status 查看git状态一般是查看已修改什么文件
+	命令git checkout -- readme.txt意思就是，把readme.txt文件在工作区的修改全部撤销，这里有两种情况：
+	一种是readme.txt自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；
+	一种是readme.txt已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
+	总之，就是让这个文件回到最近一次git commit或git add时的状态。
+	用命令git reset HEAD file可以把暂存区的修改撤销掉（unstage），重新放回工作区：
+	git reset命令既可以回退版本，也可以把暂存区的修改回退到工作区。当我们用HEAD时，表示最新的版本。
+	一般情况下，你通常直接在文件管理器中把没用的文件删了，或者用rm命令删了：
+	rm test.txt
+	git checkout -- test.txt
+	git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
+	git log命令显示从最近到最远的提交日志，如果嫌输出信息太多，看得眼花缭乱的，可以试试加上--pretty=oneline参数：
+	命令回到上个版本$ git reset --hard HEAD^ 这里的“^”一个代表上一个版本，两个就代表上上个版本
+	$ git reset --hard 3628164可以回到指定版本号，3628164是版本号的前几位，例如版本号是：3628164fb26d48395383f8f31179f24e0882e1e0
+	版本回退
+
+阅读: 1211071
+现在，你已经学会了修改文件，然后把修改提交到Git版本库，现在，再练习一次，修改readme.txt文件如下：
+
+Git is a distributed version control system.
+Git is free software distributed under the GPL.
+然后尝试提交：
+
+$ git add readme.txt
+$ git commit -m "append GPL"
+[master 3628164] append GPL
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ 回退
+ 单个文件
+ $ git reset a4e215234aa4927c85693dca7b68e9976948a35e MainActivity.java
+像这样，你不断对文件进行修改，然后不断提交修改到版本库里，就好比玩RPG游戏时，每通过一关就会自动把游戏状态存盘，如果某一关没过去，你还可以选择读取前一关的状态。有些时候，在打Boss之前，你会手动存盘，以便万一打Boss失败了，可以从最近的地方重新开始。Git也是一样，每当你觉得文件修改到一定程度的时候，就可以“保存一个快照”，这个快照在Git中被称为commit。一旦你把文件改乱了，或者误删了文件，还可以从最近的一个commit恢复，然后继续工作，而不是把几个月的工作成果全部丢失。
+
+现在，我们回顾一下readme.txt文件一共有几个版本被提交到Git仓库里了：
+
+版本1：wrote a readme file
+
+Git is a version control system.
+Git is free software.
+版本2：add distributed
+
+Git is a distributed version control system.
+Git is free software.
+版本3：append GPL
+
+Git is a distributed version control system.
+Git is free software distributed under the GPL.
+当然了，在实际工作中，我们脑子里怎么可能记得一个几千行的文件每次都改了什么内容，不然要版本控制系统干什么。版本控制系统肯定有某个命令可以告诉我们历史记录，在Git中，我们用git log命令查看：
+
+$ git log
+commit 3628164fb26d48395383f8f31179f24e0882e1e0
+Author: Michael Liao <askxuefeng@gmail.com>
+Date:   Tue Aug 20 15:11:49 2013 +0800
+
+    append GPL
+
+commit ea34578d5496d7dd233c827ed32a8cd576c5ee85
+Author: Michael Liao <askxuefeng@gmail.com>
+Date:   Tue Aug 20 14:53:12 2013 +0800
+
+    add distributed
+
+commit cb926e7ea50ad11b8f9e909c05226233bf755030
+Author: Michael Liao <askxuefeng@gmail.com>
+Date:   Mon Aug 19 17:51:55 2013 +0800
+
+    wrote a readme file
+git log命令显示从最近到最远的提交日志，我们可以看到3次提交，最近的一次是append GPL，上一次是add distributed，最早的一次是wrote a readme file。
+如果嫌输出信息太多，看得眼花缭乱的，可以试试加上--pretty=oneline参数：
+
+$ git log --pretty=oneline
+3628164fb26d48395383f8f31179f24e0882e1e0 append GPL
+ea34578d5496d7dd233c827ed32a8cd576c5ee85 add distributed
+cb926e7ea50ad11b8f9e909c05226233bf755030 wrote a readme file
+需要友情提示的是，你看到的一大串类似3628164...882e1e0的是commit id（版本号），和SVN不一样，Git的commit id不是1，2，3……递增的数字，而是一个SHA1计算出来的一个非常大的数字，用十六进制表示，而且你看到的commit id和我的肯定不一样，以你自己的为准。为什么commit id需要用这么一大串数字表示呢？因为Git是分布式的版本控制系统，后面我们还要研究多人在同一个版本库里工作，如果大家都用1，2，3……作为版本号，那肯定就冲突了。
+
+每提交一个新版本，实际上Git就会把它们自动串成一条时间线。如果使用可视化工具查看Git历史，就可以更清楚地看到提交历史的时间线：
+
+git-log-timeline
+
+好了，现在我们启动时光穿梭机，准备把readme.txt回退到上一个版本，也就是“add distributed”的那个版本，怎么做呢？
+
+首先，Git必须知道当前版本是哪个版本，在Git中，用HEAD表示当前版本，也就是最新的提交3628164...882e1e0（注意我的提交ID和你的肯定不一样），上一个版本就是HEAD^，上上一个版本就是HEAD^^，当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100。
+
+现在，我们要把当前版本“append GPL”回退到上一个版本“add distributed”，就可以使用git reset命令：
+
+$ git reset --hard HEAD^
+HEAD is now at ea34578 add distributed
+--hard参数有啥意义？这个后面再讲，现在你先放心使用。
+
+看看readme.txt的内容是不是版本add distributed：
+
+$ cat readme.txt
+Git is a distributed version control system.
+Git is free software.
+果然。
+
+还可以继续回退到上一个版本wrote a readme file，不过且慢，然我们用git log再看看现在版本库的状态：
+
+$ git log
+commit ea34578d5496d7dd233c827ed32a8cd576c5ee85
+Author: Michael Liao <askxuefeng@gmail.com>
+Date:   Tue Aug 20 14:53:12 2013 +0800
+
+    add distributed
+
+commit cb926e7ea50ad11b8f9e909c05226233bf755030
+Author: Michael Liao <askxuefeng@gmail.com>
+Date:   Mon Aug 19 17:51:55 2013 +0800
+
+    wrote a readme file
+	最新的那个版本append GPL已经看不到了！好比你从21世纪坐时光穿梭机来到了19世纪，想再回去已经回不去了，肿么办？
+
+	办法其实还是有的，只要上面的命令行窗口还没有被关掉，你就可以顺着往上找啊找啊，找到那个append GPL的commit id是3628164...，于是就可以指定回到未来的某个版本：
+
+	$ git reset --hard 3628164
+	HEAD is now at 3628164 append GPL
+	版本号没必要写全，前几位就可以了，Git会自动去找。当然也不能只写前一两位，因为Git可能会找到多个版本号，就无法确定是哪一个了。
+
+	再小心翼翼地看看readme.txt的内容：
+
+	$ cat readme.txt
+	Git is a distributed version control system.
+	Git is free software distributed under the GPL.
+	果然，我胡汉三又回来了。
+
+	Git的版本回退速度非常快，因为Git在内部有个指向当前版本的HEAD指针，当你回退版本的时候，Git仅仅是把HEAD从指向append GPL：
+
+	git-head
+
+	改为指向add distributed：
+
+	git-head-move
+
+	然后顺便把工作区的文件更新了。所以你让HEAD指向哪个版本号，你就把当前版本定位在哪。
+
+	 现在，你回退到了某个版本，关掉了电脑，第二天早上就后悔了，想恢复到新版本怎么办？找不到新版本的commit id怎么办？
+
+	在Git中，总是有后悔药可以吃的。当你用$ git reset --hard HEAD^回退到add distributed版本时，再想恢复到append GPL，就必须找到append GPL的commit id。Git提供了一个命令git reflog用来记录你的每一次命令：
+
+	$ git reflog
+	ea34578 HEAD@{0}: reset: moving to HEAD^
+	3628164 HEAD@{1}: commit: append GPL
+	ea34578 HEAD@{2}: commit: add distributed
+	cb926e7 HEAD@{3}: commit (initial): wrote a readme file
+	终于舒了口气，第二行显示append GPL的commit id是3628164，现在，你又可以乘坐时光机回到未来了。
+	git remote add origin git@github.com:michaelliao/learngit.git是指定远程仓库，其中的“michaelliao/learngit.git”,是你自己的地址
+	$ git push -u origin master
+	把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。
+
+由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。
+
+推送成功后，可以立刻在GitHub页面中看到远程库的内容已经和本地一模一样：
+	$ git push origin master
+	把本地master分支的最新修改推送至GitHub，现在，你就拥有了真正的分布式版本库！
+	要查看远程库的信息，用git remote：
+	创建分支：git checkout -b dev git checkout命令加上-b参数表示创建并切换，相当于以下两条命令
+	git branch命令查看分支：
+	git branch命令会列出所有分支，当前分支前面会标一个*号。
+	$ git checkout master切换分支，“master”是主分支
+	$ git merge dev是合并分支
+	git merge命令用于合并指定分支到当前分支。合并后，再查看readme.txt的内容，就可以看到，和dev分支的最新提交是完全一样的。
+
+	注意到上面的Fast-forward信息，Git告诉我们，这次合并是“快进模式”，也就是直接把master指向dev的当前提交，所以合并速度非常快。
+
+	当然，也不是每次合并都能Fast-forward，我们后面会讲其他方式的合并。
+
+	合并完成后，就可以放心地删除dev分支了：
+	$ git branch -d dev 删除分支
+	克隆分支：现在，远程库已经准备好了，下一步是用命令git clone克隆一个本地库：$ git clone git@github.com:michaelliao/gitskills.git
+	标签
+	在Git中打标签非常简单，首先，切换到需要打标签的分支上：
+	git branch
+	然后，敲命令git tag <name>就可以打一个新标签：
+	$ git tag v1.0
+	可以用命令git tag查看所有标签：
+	$ git tag v0.9 6224937给历史版本打标签
+	注意，标签不是按时间顺序列出，而是按字母排序的。可以用git show <tagname>查看标签信息：
+	$ git tag -d v0.1删除标签
+	因为创建的标签都只存储在本地，不会自动推送到远程。所以，打错的标签可以在本地安全删除。
+
+	如果要推送某个标签到远程，使用命令git push origin <tagname>：
+	$ git push origin --tags
+	如果标签已经推送到远程，要删除远程标签就麻烦一点，先从本地删除：
+
+$ git tag -d v0.9
+Deleted tag 'v0.9' (was 6224937)
+然后，从远程删除。删除命令也是push，但是格式如下：
+
+$ git push origin :refs/tags/v0.9
+To git@github.com:michaelliao/learngit.git
+ - [deleted]         v0.9
+要看看是否真的从远程库删除了标签，可以登陆GitHub查看。
+git 查看远程仓库
+$ git remote 
+	推送远程仓库：
+	$ git push [remote-name] [本地分支名]
+
+	
+
